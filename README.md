@@ -70,7 +70,6 @@ For a visual representation, refer to the [ERD](docs/ERD.png) and [Class Diagram
 │   ├── ERD.png               # Entity-Relationship Diagram
 │   ├── DatabaseSchema.sql    # MS SQL Database Schema script
 │   ├── ClassDiagram.png      # UML Class Diagram
-│   └── Architecture.md       # Detailed architecture and design documentation
 ├── src
 │   └── CodeOverflow          # Main C# project folder
 │       ├── Program.cs        # Application entry point
