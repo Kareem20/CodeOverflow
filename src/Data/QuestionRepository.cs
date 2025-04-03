@@ -117,7 +117,8 @@ namespace CodeOverFlow.Data
             }
             return questions;
         }
-        public void AddPreferredTag(int questionId,int tagId) {
+        public void AddPreferredTag(int questionId, int tagId)
+        {
 
             using (var con = new SqlConnection(_connectionString))
             {

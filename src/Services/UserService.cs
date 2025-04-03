@@ -36,8 +36,25 @@ namespace CodeOverFlow.Services
             Console.WriteLine("Invalid credentails.");
             return null;
         }
-
-
-
+        public bool IsUsernameTaken(string username)
+        {
+            return _userRepository.CheckUsernameExists(username);
+        }
+        public bool IsEmailTaken(string email)
+        {
+            return _userRepository.CheckEmailExists(email);
+        }
+        public bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

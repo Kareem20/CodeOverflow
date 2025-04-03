@@ -125,5 +125,33 @@ namespace CodeOverFlow.Data
             }
             return tags;
         }
+        public bool CheckUsernameExists(string username)
+        {
+            using (var con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                string query = $"SELECT COUNT(1) FROM {DbMetaData.USER_TABLE}" +
+                    $" WHERE {DbMetaData.USER_USERNAME_COLUMN} = @Username";
+                using (var cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Username", username);
+                    return (int)cmd.ExecuteScalar() > 0;
+                }
+            }
+        }
+        public bool CheckEmailExists(string email)
+        {
+            using (var con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                string query = $"SELECT COUNT(1) FROM {DbMetaData.USER_TABLE} " +
+                    $"WHERE {DbMetaData.USER_EMAIL_COLUMN} = @Email";
+                using (var cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    return (int)cmd.ExecuteScalar() > 0;
+                }
+            }
+        }
     }
 }

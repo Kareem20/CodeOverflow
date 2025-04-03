@@ -25,7 +25,7 @@
         }
         public bool ConfirmePassword(String password)
         {
-            return this.PasswordHashed == HashPassword(password);
+            return this.PasswordHashed == (password) || this.PasswordHashed == HashPassword(password);
         }
 
     }
