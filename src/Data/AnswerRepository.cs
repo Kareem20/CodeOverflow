@@ -77,5 +77,35 @@ namespace CodeOverFlow.Data
                 }
             }
         }
+        public List<Answer> GetByQuestion(int questionId)
+        {
+            List<Answer> answers = new List<Answer>();
+            using (var con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                string query = $"SELECT * FROM {DbMetaData.ANSWER_TABLE} " +
+                    $"WHERE {DbMetaData.QUESTION_ID_COLUMN} = @QuestionId";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@QuestionId", questionId);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            answers.Add(new Answer
+                            {
+                                ID = (int)reader[DbMetaData.ANSWER_ID_COLUMN],
+                                Body = reader[DbMetaData.ANSWER_TEXT_COLUMN].ToString(),
+                                AuthorID = (int)reader[DbMetaData.USER_ID_COLUMN],
+                                QuestionId = (int)reader[DbMetaData.QUESTION_ID_COLUMN],
+                                Timestamp = (DateTime)reader[DbMetaData.ANSWER_TIMESTAMP_COLUMN],
+                                isEdited = (bool)reader[DbMetaData.ANSWER_ISEDITED_COLUMN]
+                            });
+                        }
+                    }
+                }
+            }
+            return answers;
+        }
     }
 }

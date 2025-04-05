@@ -29,21 +29,23 @@ namespace CodeOverFlow.Services
                 if ((user.Username.Equals(identifier) || user.Email.Equals(identifier))
                     && user.ConfirmePassword(password))
                 {
-                    Console.WriteLine("Login successfully");
                     return user;
                 }
             }
             Console.WriteLine("Invalid credentails.");
             return null;
         }
-        public bool IsUsernameTaken(string username)
+        public List<int> GetPreferredTags(User user)
         {
-            return _userRepository.CheckUsernameExists(username);
+            List<int> tagsId = new List<int>();
+            foreach (Tag tag in _userRepository.GetUserPreferredTag(user.UserID))
+                tagsId.Add(tag.TagID);
+            return tagsId;
         }
-        public bool IsEmailTaken(string email)
-        {
-            return _userRepository.CheckEmailExists(email);
-        }
+        public User GetById(int id) => _userRepository.getByID(id);
+
+        public bool IsUsernameTaken(string username) => _userRepository.CheckUsernameExists(username);
+        public bool IsEmailTaken(string email) => _userRepository.CheckEmailExists(email);
         public bool IsValidEmail(string email)
         {
             try

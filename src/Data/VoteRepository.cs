@@ -22,8 +22,8 @@ namespace CodeOverFlow.Data
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@UserId", vote.VoterID);
-                    cmd.Parameters.AddWithValue("@QuestionId", vote.QuestionID);
-                    cmd.Parameters.AddWithValue("@AnswerId", vote.AnswerID);
+                    cmd.Parameters.AddWithValue("@QuestionId", vote.QuestionID ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@AnswerId", vote.AnswerID ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@VoteType", vote.VoteType);
                     cmd.Parameters.AddWithValue("@Timestamp", vote.Timestamp);
                     cmd.ExecuteNonQuery();
@@ -55,7 +55,7 @@ namespace CodeOverFlow.Data
                 con.Open();
                 string query = $"SELECT * FROM {DbMetaData.VOTE_TABLE} " +
                     $"WHERE {DbMetaData.USER_ID_COLUMN} = @UserId " +
-                    $"AND ({DbMetaData.QUESTION_ID_COLUMN} = @PostId OR" +
+                    $"AND ({DbMetaData.QUESTION_ID_COLUMN} = @PostId OR " +
                     $"{DbMetaData.ANSWER_ID_COLUMN} = @PostId)";
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {

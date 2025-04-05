@@ -39,5 +39,6 @@ namespace CodeOverFlow.Services
             _answerRepository.Edit(answer.ID, new_answer);
             Console.WriteLine("Answer is edited sucessfully");
         }
+        public List<Answer> GetListOfAnswer(int questionId) => _answerRepository.GetByQuestion(questionId);
     }
 }

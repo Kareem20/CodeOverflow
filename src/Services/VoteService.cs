@@ -7,6 +7,8 @@ namespace CodeOverFlow.Services
     {
         private readonly VoteRepository _voteRepository = new VoteRepository();
 
+        // @questionId null if the vote for answer.
+        // @answerId null i the vote for question.
         public void VotePost(User voter, int? questionId, int? answerId, int authorId, int new_vote)
         {
             if (voter.UserID == authorId)
