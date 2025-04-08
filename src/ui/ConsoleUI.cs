@@ -152,7 +152,7 @@ namespace CodeOverflow.ui
             {
                 Console.WriteLine($"{cnt}: {question.Title}?" +
                     $"\n    {question.Body}" +
-                    $"\n        Upvotes: {question.Upvotes} / Downvotes: {question.Downvotes}" +
+                    $"\n        Upvotes: {_voteService.GetUpvotes(question.ID)} / Downvotes: {_voteService.GetDownvotes(question.ID)}" +
                     $"\n Author: {_userService.GetById(question.AuthorID).Username}");
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 cnt++;
@@ -184,7 +184,8 @@ namespace CodeOverflow.ui
                         }
                     }
                     break;
-                }else if(choice =="2" || choice == "3")
+                }
+                else if (choice == "2" || choice == "3")
                 {
                     // TODO: Vote a specific question.
                 }
@@ -202,7 +203,7 @@ namespace CodeOverflow.ui
         {
             Console.WriteLine($"- {question.Title}" +
                 $"\n  {question.Body}" +
-                $"\n        Upvotes: {question.Upvotes} / Downvotes: {question.Downvotes}" +
+                $"\n        Upvotes: {_voteService.GetUpvotes(question.ID)} / Downvotes: {_voteService.GetDownvotes(question.ID)}" +
                 $"\n Author: {_userService.GetById(question.AuthorID).Username}");
             List<Answer> answers = _answerService.GetListOfAnswer(question.ID);
             if (answers.Count == 0)
@@ -217,7 +218,7 @@ namespace CodeOverflow.ui
                     int cnt = 1;
                     Console.WriteLine($"{cnt++}: {answer.Body}" +
                         $"\n    Author: {_userService.GetById(answer.AuthorID).Username}" +
-                        $"\n        Upvotes: {answer.Upvotes} / Downvotes: {answer.Downvotes}");
+                        $"\n        Upvotes: {_voteService.GetUpvotes(answer.ID)} / Downvotes: {_voteService.GetDownvotes(answer.ID)}");
                 }
                 while (true)
                 {

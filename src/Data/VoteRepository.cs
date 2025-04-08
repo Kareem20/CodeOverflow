@@ -69,8 +69,8 @@ namespace CodeOverFlow.Data
                             {
                                 VoteID = (int)reader[DbMetaData.VOTE_ID_COLUMN],
                                 VoterID = (int)reader[DbMetaData.USER_ID_COLUMN],
-                                QuestionID = (int)reader[DbMetaData.QUESTION_ID_COLUMN],
-                                AnswerID = (int)reader[DbMetaData.ANSWER_ID_COLUMN],
+                                QuestionID = reader[DbMetaData.QUESTION_ID_COLUMN] != DBNull.Value ? (int?)reader[DbMetaData.QUESTION_ID_COLUMN] : null,
+                                AnswerID = reader[DbMetaData.ANSWER_ID_COLUMN] != DBNull.Value ? (int?)reader[DbMetaData.ANSWER_ID_COLUMN] : null,
                                 VoteType = (int)reader[DbMetaData.VOTE_TYPE_COLUMN],
                                 Timestamp = (DateTime)reader[DbMetaData.VOTE_TIMESTAMP_COLUMN]
                             };
@@ -85,9 +85,10 @@ namespace CodeOverFlow.Data
             using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
-                string query = $"SELECT COUNT(*) AS vote_count" +
+                string query = $"SELECT COUNT(*) AS vote_count " +
                     $"FROM {DbMetaData.VOTE_TABLE} " +
-                    $"WHERE {DbMetaData.VOTE_ID_COLUMN} = @postId " +
+                    $"WHERE ({DbMetaData.QUESTION_ID_COLUMN} = @postId " +
+                    $"OR {DbMetaData.ANSWER_ID_COLUMN} = @postId)" +
                     $"AND {DbMetaData.VOTE_TYPE_COLUMN} = @voteType";
                 using (var cmd = new SqlCommand(query, con))
                 {

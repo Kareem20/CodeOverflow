@@ -8,7 +8,7 @@ namespace CodeOverFlow.Services
         private readonly VoteRepository _voteRepository = new VoteRepository();
 
         // @questionId null if the vote for answer.
-        // @answerId null i the vote for question.
+        // @answerId null if the vote for question.
         public void VotePost(User voter, int? questionId, int? answerId, int authorId, int new_vote)
         {
             if (voter.UserID == authorId)
@@ -53,5 +53,8 @@ namespace CodeOverFlow.Services
                 Console.WriteLine("Your vote has been recorded.");
             }
         }
+        public int GetUpvotes(int postId) => _voteRepository.GetNumberOfVotes(postId, 1);
+        public int GetDownvotes(int postId) => _voteRepository.GetNumberOfVotes(postId, -1);
+
     }
 }
