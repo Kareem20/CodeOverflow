@@ -26,7 +26,7 @@ namespace CodeOverFlow.Services
             Console.WriteLine("Question posted successfully.");
         }
         // Get the questions feed based on the user's preferred tags.
-        public List<Question> GetFeed(List<int> tags) => _questionRepository.GetByPreferredTags(tags);
+        public List<Question> GetFeed(List<Tag> tags) => _questionRepository.GetByPreferredTags(tags);
 
         public Question GetQuestionId(int questionId) => _questionRepository.GetById(questionId);
     }

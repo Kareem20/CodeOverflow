@@ -97,6 +97,22 @@ namespace CodeOverFlow.Data
                 }
             }
         }
+        public void DeletePreferredTag(int userId,int tagId)
+        {
+            using (var con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                string query = $"DELETE FROM {DbMetaData.USER_TAG_TABLE} " +
+                    $"WHERE {DbMetaData.USER_ID_COLUMN} = @userId " +
+                    $"AND {DbMetaData.TAG_ID_COLUMN} = @tagId";
+                using(var cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("tagId", tagId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public List<Tag> GetUserPreferredTag(int userId)
         {
             List<Tag> tags = new List<Tag>();

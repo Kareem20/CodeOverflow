@@ -35,15 +35,10 @@ namespace CodeOverFlow.Services
             Console.WriteLine("Invalid credentails.");
             return null;
         }
-        public List<int> GetPreferredTags(User user)
-        {
-            List<int> tagsId = new List<int>();
-            foreach (Tag tag in _userRepository.GetUserPreferredTag(user.UserID))
-                tagsId.Add(tag.TagID);
-            return tagsId;
-        }
+        public List<Tag> GetPreferredTags(User user) => _userRepository.GetUserPreferredTag(user.UserID);
+        public void AddPreferredTag(int userId, int tagId) => _userRepository.AddPreferredTag(userId, tagId);
+        public void DeletePreferredTag(int userId, int tagId) => _userRepository.DeletePreferredTag(userId, tagId);
         public User GetById(int id) => _userRepository.getByID(id);
-
         public bool IsUsernameTaken(string username) => _userRepository.CheckUsernameExists(username);
         public bool IsEmailTaken(string email) => _userRepository.CheckEmailExists(email);
         public bool IsValidEmail(string email)

@@ -9,6 +9,7 @@ namespace CodeOverflow.ui
         private readonly QuestionService _questionService = new QuestionService();
         private readonly AnswerService _answerService = new AnswerService();
         private readonly VoteService _voteService = new VoteService();
+        private readonly TagService _tagService = new TagService();
         private User currentUser = null;
 
         public void Start()
@@ -136,10 +137,9 @@ namespace CodeOverflow.ui
                 }
             }
         }
-
         private void BrowseFeed()
         {
-            List<int> userPreferredTags = _userService.GetPreferredTags(currentUser);
+            List<Tag> userPreferredTags = _userService.GetPreferredTags(currentUser);
             if (userPreferredTags.Count == 0)
             {
                 Console.WriteLine("There is no questions based on your preferred tags." +
@@ -150,12 +150,11 @@ namespace CodeOverflow.ui
             int cnt = 1;
             foreach (Question question in preferredQuestions)
             {
-                Console.WriteLine($"{cnt}: {question.Title}?" +
+                Console.WriteLine($"{cnt++}: {question.Title}?" +
                     $"\n    {question.Body}" +
                     $"\n        Upvotes: {_voteService.GetUpvotes(question.ID)} / Downvotes: {_voteService.GetDownvotes(question.ID)}" +
                     $"\n Author: {_userService.GetById(question.AuthorID).Username}");
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                cnt++;
             }
             while (true)
             {
@@ -187,7 +186,46 @@ namespace CodeOverflow.ui
                 }
                 else if (choice == "2" || choice == "3")
                 {
-                    // TODO: Vote a specific question.
+                    while (true)
+                    {
+                        Console.WriteLine("Choose an option" +
+                       "\n1: Upvote a specific question" +
+                       "\n2: Downvote a specific question" +
+                       "\n3: Return to main options.");
+                        string voteChoice = Console.ReadLine();
+                        if (voteChoice == "1" || voteChoice == "2")
+                        {
+                            while (true)
+                            {
+                                Console.WriteLine("Enter the number of question.");
+                                string indexChoice = Console.ReadLine();
+                                int questionIndex = int.Parse(indexChoice) - 1;
+                                if (questionIndex < 0 || questionIndex >= preferredQuestions.Count)
+                                {
+                                    Console.WriteLine("Please select a correct question number.");
+                                }
+                                else
+                                {
+                                    _voteService.VotePost(currentUser
+                                        , preferredQuestions[questionIndex].ID
+                                        , null
+                                        , preferredQuestions[questionIndex].AuthorID
+                                        , (choice == "1" ? 1 : -1));
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        else if (choice == "3")
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid option. Please try again.");
+                        }
+                    }
+                    break;
                 }
                 else if (choice == "4")
                 {
@@ -240,12 +278,13 @@ namespace CodeOverflow.ui
                             }
                             else
                             {
-                                _voteService.VotePost(currentUser, null
+                                _voteService.VotePost(currentUser
+                                    , null
                                     , answers[answerIndex].ID
-                                    , answers[answerIndex].AuthorID, (choice == "1" ? 1 : -1));
+                                    , answers[answerIndex].AuthorID
+                                    , (choice == "1" ? 1 : -1));
                                 break;
                             }
-
                         }
                         break;
                     }
@@ -261,7 +300,52 @@ namespace CodeOverflow.ui
             }
         }
         private void AskQuestion() { }
-        private void ManagePreferredTags() { }
+        private void ManagePreferredTags()
+        {
+            List<Tag> preferredTags = _userService.GetPreferredTags(currentUser);
+            Console.WriteLine("Your prefered tags.");
+            int cnt = 1;
+            foreach (Tag tag in preferredTags)
+                Console.WriteLine($"{cnt++}: {tag.TagName}");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            while (true)
+            {
+                Console.WriteLine("Choose an option" +
+                    "\n1: Add a new Tag." +
+                    "\n2: Delete a preferred Tag." +
+                    "\n3: Back.");
+                string choice = Console.ReadLine();
+                if (choice == "1")
+                {
+                    string new_tag = Console.ReadLine();
+                    int new_add_tag_id = _tagService.GetOrCreateTagId(new_tag);
+                    _userService.AddPreferredTag(currentUser.UserID, new_add_tag_id);
+                    break;
+                }
+                else if (choice == "2")
+                {
+                    while (true)
+                    {
+                        string indexChoice = Console.ReadLine();
+                        int tagIndex = int.Parse(indexChoice) - 1;
+                        if (tagIndex < 0 || tagIndex >= preferredTags.Count)
+                        {
+                            Console.WriteLine("Please select a correct tag number.");
+                        }
+                        else
+                        {
+                            _userService.DeletePreferredTag(currentUser.UserID,preferredTags[tagIndex].TagID);
+                            break;
+                        }
+                    }
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid option. Please try again.");
+                }
+            }
+        }
         private void Logout() { }
         private void DisplayLine() => Console.WriteLine("-----------------------------------------\n");
 

@@ -80,9 +80,8 @@ namespace CodeOverFlow.Data
             }
             return questions;
         }
-
         // Get questions filtered by preferred tag IDs.
-        public List<Question> GetByPreferredTags(List<int> tagIds)
+        public List<Question> GetByPreferredTags(List<Tag> tagIds)
         {
             List<Question> questions = new List<Question>();
             using (var conn = new SqlConnection(_connectionString))
@@ -90,6 +89,9 @@ namespace CodeOverFlow.Data
                 conn.Open();
                 // (tag1,tag2,...)
                 string tagsInString = "(" + string.Join(", ", tagIds) + ")";
+                foreach (Tag tag in tagIds)
+                    tagsInString += tagIds + ",";
+                tagsInString = tagsInString.Remove(tagsInString.Length - 1);
                 // Build a simple query that selects questions having at least one of the tags.
                 string query = $"SELECT DISTINCT q.* " +
                     $"FROM " +
