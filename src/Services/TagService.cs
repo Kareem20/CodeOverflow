@@ -1,9 +1,5 @@
 ﻿using CodeOverFlow.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CodeOverFlow.Entities;
 
 namespace CodeOverFlow.Services
 {
@@ -18,6 +14,6 @@ namespace CodeOverFlow.Services
                 return existingTagId.Value;
             return _tagRepository.AddTag(tagName); // returns new tag ID
         }
-
+        public List<Tag> GetAll() => _tagRepository.GetAll();
     }
 }

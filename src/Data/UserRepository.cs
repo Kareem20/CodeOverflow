@@ -97,7 +97,7 @@ namespace CodeOverFlow.Data
                 }
             }
         }
-        public void DeletePreferredTag(int userId,int tagId)
+        public void DeletePreferredTag(int userId, int tagId)
         {
             using (var con = new SqlConnection(_connectionString))
             {
@@ -105,7 +105,7 @@ namespace CodeOverFlow.Data
                 string query = $"DELETE FROM {DbMetaData.USER_TAG_TABLE} " +
                     $"WHERE {DbMetaData.USER_ID_COLUMN} = @userId " +
                     $"AND {DbMetaData.TAG_ID_COLUMN} = @tagId";
-                using(var cmd = new SqlCommand(query, con))
+                using (var cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
                     cmd.Parameters.AddWithValue("tagId", tagId);

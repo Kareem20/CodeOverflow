@@ -216,7 +216,7 @@ namespace CodeOverflow.ui
                             }
                             break;
                         }
-                        else if (choice == "3")
+                        else if (voteChoice == "3")
                         {
                             break;
                         }
@@ -299,7 +299,31 @@ namespace CodeOverflow.ui
                 }
             }
         }
-        private void AskQuestion() { }
+        private void AskQuestion()
+        {
+            Console.WriteLine("Enter the main title of the question.");
+            string questionTitle = Console.ReadLine();
+            Console.WriteLine("Enter the body of the question.");
+            string questionBody = Console.ReadLine();
+            List<Tag> questionTags = new List<Tag>();
+            Console.Write("Enter tags (comma-separated, or leave blank): ");
+            string rawTags = Console.ReadLine() ?? "";
+            var tagNames = rawTags
+                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(t => t.Trim().ToLower())
+                .Where(t => !string.IsNullOrEmpty(t))
+                .Distinct()
+                .ToList();
+            foreach (var name in tagNames)
+            {
+                questionTags.Add(new Tag
+                {
+                    TagID = _tagService.GetOrCreateTagId(name),
+                    TagName = name
+                });
+            }
+            _questionService.AskQuestion(currentUser, questionTitle, questionBody, questionTags);
+        }
         private void ManagePreferredTags()
         {
             List<Tag> preferredTags = _userService.GetPreferredTags(currentUser);
@@ -317,6 +341,7 @@ namespace CodeOverflow.ui
                 string choice = Console.ReadLine();
                 if (choice == "1")
                 {
+                    Console.WriteLine("Enter the tag name.");
                     string new_tag = Console.ReadLine();
                     int new_add_tag_id = _tagService.GetOrCreateTagId(new_tag);
                     _userService.AddPreferredTag(currentUser.UserID, new_add_tag_id);
@@ -326,6 +351,7 @@ namespace CodeOverflow.ui
                 {
                     while (true)
                     {
+                        Console.WriteLine("Enter the deleted tag.");
                         string indexChoice = Console.ReadLine();
                         int tagIndex = int.Parse(indexChoice) - 1;
                         if (tagIndex < 0 || tagIndex >= preferredTags.Count)
@@ -334,7 +360,7 @@ namespace CodeOverflow.ui
                         }
                         else
                         {
-                            _userService.DeletePreferredTag(currentUser.UserID,preferredTags[tagIndex].TagID);
+                            _userService.DeletePreferredTag(currentUser.UserID, preferredTags[tagIndex].TagID);
                             break;
                         }
                     }

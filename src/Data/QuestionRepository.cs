@@ -8,21 +8,27 @@ namespace CodeOverFlow.Data
         private readonly string _connectionString = DbConfig.ConnectionString;
         public void Add(Question question)
         {
+            int questionAddId;
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
                 string query = $"INSERT INTO {DbMetaData.QUESTION_TABLE} " +
                     $"({DbMetaData.QUESTION_TITLE_COLUMN}, {DbMetaData.QUESTION_TEXT_COLUMN}, " +
                     $"{DbMetaData.USER_ID_COLUMN}, {DbMetaData.QUESTION_TIMESTAMP_COLUMN}) " +
+                    $"OUTPUT INSERTED.{DbMetaData.QUESTION_ID_COLUMN} " +
                     $"VALUES (@Title, @Body, @AuthorId, @Timestamp)";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Title", question.Title);
                     cmd.Parameters.AddWithValue("@Body", question.Body);
                     cmd.Parameters.AddWithValue("@AuthorId", question.AuthorID);
-                    cmd.Parameters.AddWithValue("@Timestamp", question.Timestamp);
-                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@Timestamp", question.Timestamp);;
+                    questionAddId = (int)cmd.ExecuteScalar();
                 }
+            }
+            foreach(Tag tag in question.Tags)
+            {
+                AddPreferredTag(questionAddId, tag.TagID);
             }
         }
         public Question? GetById(int id)
@@ -88,10 +94,11 @@ namespace CodeOverFlow.Data
             {
                 conn.Open();
                 // (tag1,tag2,...)
-                string tagsInString = "(" + string.Join(", ", tagIds) + ")";
+                string tagsInString = "(";
                 foreach (Tag tag in tagIds)
-                    tagsInString += tagIds + ",";
+                    tagsInString += tag.TagID + ",";
                 tagsInString = tagsInString.Remove(tagsInString.Length - 1);
+                tagsInString += ")";
                 // Build a simple query that selects questions having at least one of the tags.
                 string query = $"SELECT DISTINCT q.* " +
                     $"FROM " +
