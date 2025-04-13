@@ -109,6 +109,7 @@ namespace CodeOverflow.ui
             bool backToMainMenu = false;
             while (!backToMainMenu)
             {
+                //TODO: Edite your own questions
                 Console.WriteLine("User Options: " +
                     "\n1: Browse the feed." +
                     "\n2: Ask a Question." +
@@ -118,7 +119,7 @@ namespace CodeOverflow.ui
                 switch (choice)
                 {
                     case "1":
-                        BrowseFeed();
+                        BrowseFeed(); // TODO make the feed show user's question also.
                         break;
                     case "2":
                         AskQuestion();
@@ -160,9 +161,8 @@ namespace CodeOverflow.ui
             {
                 Console.WriteLine("Choose an option" +
                     "\n1: To view a specific question." +
-                    "\n2: Upvote a specific question." +
-                    "\n3: Downvote a specific question." +
-                    "\n4: Return to main options.");
+                    "\n2: Vote a specific question." +
+                    "\n3: Return to main options.");
                 string choice = Console.ReadLine();
                 if (choice == "1")
                 {
@@ -184,7 +184,7 @@ namespace CodeOverflow.ui
                     }
                     break;
                 }
-                else if (choice == "2" || choice == "3")
+                else if (choice == "2")
                 {
                     while (true)
                     {
@@ -210,7 +210,7 @@ namespace CodeOverflow.ui
                                         , preferredQuestions[questionIndex].ID
                                         , null
                                         , preferredQuestions[questionIndex].AuthorID
-                                        , (choice == "1" ? 1 : -1));
+                                        , (voteChoice == "1" ? 1 : -1));
                                     break;
                                 }
                             }
@@ -227,7 +227,7 @@ namespace CodeOverflow.ui
                     }
                     break;
                 }
-                else if (choice == "4")
+                else if (choice == "3")
                 {
                     break;
                 }
@@ -372,7 +372,7 @@ namespace CodeOverflow.ui
                 }
             }
         }
-        private void Logout() { }
+        private void Logout() => Console.WriteLine("See you late :).");
         private void DisplayLine() => Console.WriteLine("-----------------------------------------\n");
 
     }
