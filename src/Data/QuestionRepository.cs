@@ -22,13 +22,27 @@ namespace CodeOverFlow.Data
                     cmd.Parameters.AddWithValue("@Title", question.Title);
                     cmd.Parameters.AddWithValue("@Body", question.Body);
                     cmd.Parameters.AddWithValue("@AuthorId", question.AuthorID);
-                    cmd.Parameters.AddWithValue("@Timestamp", question.Timestamp);;
+                    cmd.Parameters.AddWithValue("@Timestamp", question.Timestamp); ;
                     questionAddId = (int)cmd.ExecuteScalar();
                 }
             }
-            foreach(Tag tag in question.Tags)
+            foreach (Tag tag in question.Tags)
             {
                 AddPreferredTag(questionAddId, tag.TagID);
+            }
+        }
+        public void Delete(int questionId)
+        {
+            using (var con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                string query = $"DELETE FROM {DbMetaData.QUESTION_TABLE} " +
+                    $"WHERE {DbMetaData.QUESTION_ID_COLUMN} = @questionId";
+                using (var cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@questionId", questionId);
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
         public Question? GetById(int id)
@@ -172,6 +186,38 @@ namespace CodeOverFlow.Data
                 }
             }
             return tags;
+        }
+
+        // Get questions filtered by user_id.
+        public List<Question> GetUserQuestions(int userId)
+        {
+            List<Question> questions = new List<Question>();
+            using (var con = new SqlConnection(_connectionString))
+            {
+                con.Open();
+                string query = $"SELECT * from {DbMetaData.QUESTION_TABLE} " +
+                    $"where {DbMetaData.USER_ID_COLUMN} = @userId";
+                using (var cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            questions.Add(new Question
+                            {
+                                ID = (int)reader[DbMetaData.QUESTION_ID_COLUMN],
+                                Title = reader[DbMetaData.QUESTION_TITLE_COLUMN].ToString(),
+                                Body = reader[DbMetaData.QUESTION_TEXT_COLUMN].ToString(),
+                                AuthorID = (int)reader[DbMetaData.USER_ID_COLUMN],
+                                Timestamp = (DateTime)reader[DbMetaData.QUESTION_TIMESTAMP_COLUMN]
+                            });
+                        }
+                    }
+                }
+
+            }
+            return questions;
         }
     }
 }

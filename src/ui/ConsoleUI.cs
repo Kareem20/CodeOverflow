@@ -109,17 +109,18 @@ namespace CodeOverflow.ui
             bool backToMainMenu = false;
             while (!backToMainMenu)
             {
-                //TODO: Edite your own questions
+                //TODO: Edit your own questions
                 Console.WriteLine("User Options: " +
                     "\n1: Browse the feed." +
                     "\n2: Ask a Question." +
                     "\n3: Manage preferred tags." +
-                    "\n4: Logout.");
+                    "\n4: View Your own Questions." +
+                    "\n5: Logout.");
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
                     case "1":
-                        BrowseFeed(); // TODO make the feed show user's question also.
+                        BrowseFeed();
                         break;
                     case "2":
                         AskQuestion();
@@ -128,6 +129,9 @@ namespace CodeOverflow.ui
                         ManagePreferredTags();
                         break;
                     case "4":
+                        ViewUserQuestions();
+                        break;
+                    case "5":
                         Logout();
                         backToMainMenu = true;
                         break;
@@ -159,7 +163,7 @@ namespace CodeOverflow.ui
             }
             while (true)
             {
-                Console.WriteLine("Choose an option" +
+                Console.WriteLine("Choose an option:" +
                     "\n1: To view a specific question." +
                     "\n2: Vote a specific question." +
                     "\n3: Return to main options.");
@@ -188,7 +192,7 @@ namespace CodeOverflow.ui
                 {
                     while (true)
                     {
-                        Console.WriteLine("Choose an option" +
+                        Console.WriteLine("Choose an option:" +
                        "\n1: Upvote a specific question" +
                        "\n2: Downvote a specific question" +
                        "\n3: Return to main options.");
@@ -228,6 +232,71 @@ namespace CodeOverflow.ui
                     break;
                 }
                 else if (choice == "3")
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid option. Please try again.");
+                }
+            }
+        }
+        private void ViewUserQuestions()
+        {
+            List<Question> userQuestions = _questionService.GetUserQuestions(currentUser.UserID);
+            if (userQuestions.Count == 0)
+            {
+                Console.WriteLine("You don't ask questions yet.");
+                return;
+            }
+            int cnt = 1;
+            foreach (Question question in userQuestions)
+            {
+                Console.WriteLine($"{cnt++}: {question.Title}?" +
+                    $"\n    {question.Body}" +
+                    $"\n        Upvotes: {_voteService.GetUpvotes(question.ID)} / Downvotes: {_voteService.GetDownvotes(question.ID)}");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            }
+            while (true)
+            {
+                Console.WriteLine("Choose an option:" +
+                   "\n1: To view a specific question." +
+                   "\n2: Edit a specific question." +
+                   "\n3: Delete a specific question." +
+                   "\n4: Return to main options.");
+                string choice = Console.ReadLine();
+                if (choice == "1" || choice == "2" || choice == "3")
+                {
+                    while (true)
+                    {
+                        Console.WriteLine("Enter the number of question.");
+                        string indexChoice = Console.ReadLine();
+                        int questionIndex = int.Parse(indexChoice) - 1;
+                        if (questionIndex < 0 || questionIndex >= userQuestions.Count)
+                        {
+                            Console.WriteLine("Please select a correct question number.");
+                        }
+                        else
+                        {
+                            if (choice == "1")
+                            {
+                                ViewSpecificQuestion(userQuestions[questionIndex]);
+                            }
+                            else if (choice == "2")
+                            {
+                                //edit
+                            }
+                            else if (choice == "3")
+                            {
+                                DeleteQuestion(userQuestions[questionIndex]);
+                            }
+                            DisplayLine();
+                            break;
+                        }
+                    }
+                    break;
+                }
+                else if (choice == "4")
                 {
                     break;
                 }
@@ -298,6 +367,12 @@ namespace CodeOverflow.ui
                     }
                 }
             }
+        }
+
+        private void DeleteQuestion(Question question)
+        {
+            _questionService.DeleteQuestion(question.ID);
+            Console.WriteLine("Question deleted successfully.");
         }
         private void AskQuestion()
         {

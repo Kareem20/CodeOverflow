@@ -11,7 +11,6 @@ namespace CodeOverFlow.Services
         {
             if (user == null)
             {
-                //TODO: not loggin
                 return;
             }
             Question new_question = new Question
@@ -28,6 +27,10 @@ namespace CodeOverFlow.Services
         // Get the questions feed based on the user's preferred tags.
         public List<Question> GetFeed(List<Tag> tags) => _questionRepository.GetByPreferredTags(tags);
 
+        public List<Question> GetUserQuestions(int userId) => _questionRepository.GetUserQuestions(userId);
+
         public Question GetQuestionId(int questionId) => _questionRepository.GetById(questionId);
+
+        public void DeleteQuestion(int questionId) => _questionRepository.Delete(questionId);
     }
 }
